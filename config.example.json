@@ -1,0 +1,5 @@
+{
+  "base_url": "https://your-llm-endpoint.com",
+  "api_key": "your-api-key-here",
+  "model": "your-model-name"
+}

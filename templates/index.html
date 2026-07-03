@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实习成长记录</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --surface: #ffffff;
+            --text: #2c2c2c;
+            --text-muted: #8a8a8a;
+            --accent: #e8590c;
+            --accent-soft: #fff4e6;
+            --border: #eee8e0;
+            --radius: 12px;
+            --font-serif: 'Noto Serif SC', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Stats bar */
+        .stats {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 48px;
+            padding: 24px 32px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: var(--font-mono);
+        }
+
+        .stat-item .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Section */
+        section {
+            margin-bottom: 48px;
+        }
+
+        section h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        section h2::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Daily list */
+        .daily-list {
+            list-style: none;
+        }
+
+        .daily-item {
+            padding: 20px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            transition: transform 0.15s, box-shadow 0.15s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .daily-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .daily-item .date {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .daily-item .title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .daily-item .tags {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        /* Docs list */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .doc-card {
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.15s;
+        }
+
+        .doc-card:hover { transform: translateY(-2px); }
+
+        .doc-card .name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .doc-card .meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Empty state */
+        .empty {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 24px;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: opacity 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-serif);
+        }
+
+        .btn:hover { opacity: 0.85; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>实习成长记录</h1>
+            <p>记录每一天的进步，积累属于自己的成长轨迹</p>
+            <nav>
+                <a href="/" class="active">首页</a>
+                <a href="/daily/new">写日报</a>
+                <a href="/upload">上传文件</a>
+                <a href="/projects">项目</a>
+                <a href="/tools">小工具箱</a>
+                <a href="/review">AI 复盘</a>
+                <a href="/dashboard">成长看板</a>
+            </nav>
+        </header>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="number">{{ dailies|length }}</div>
+                <div class="label">日报数</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">{{ docs|length }}</div>
+                <div class="label">学习文件</div>
+            </div>
+            <div class="stat-item">
+                <div class="number">{{ today }}</div>
+                <div class="label">今天</div>
+            </div>
+        </div>
+
+        <section>
+            <h2>最近日报</h2>
+            {% if dailies %}
+            <ul class="daily-list">
+                {% for d in dailies[:10] %}
+                <a class="daily-item" href="/daily/{{ d.date }}">
+                    <div class="date">{{ d.date_display }}</div>
+                    <div class="title">{{ d.title }}</div>
+                    {% if d.tags %}
+                    <div class="tags">
+                        {% for t in d.tags %}<span class="tag">{{ t }}</span>{% endfor %}
+                    </div>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty">
+                <p>还没有日报，开始记录你的第一天吧</p>
+                <br>
+                <a href="/daily/new" class="btn">写第一篇日报</a>
+            </div>
+            {% endif %}
+        </section>
+
+        <section>
+            <h2>学习文件</h2>
+            {% if docs %}
+            <div class="docs-grid">
+                {% for doc in docs %}
+                <a class="doc-card" href="/docs/{{ doc.name }}" target="_blank">
+                    <div class="name">{{ doc.name }}</div>
+                    <div class="meta">{{ doc.modified }} · {{ (doc.size / 1024)|round(1) }}KB</div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty">
+                <p>还没有学习文件</p>
+                <br>
+                <a href="/upload" class="btn">上传文件</a>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

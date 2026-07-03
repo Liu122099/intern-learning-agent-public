@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 周复盘 - 实习成长记录</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --surface: #ffffff;
+            --text: #2c2c2c;
+            --text-muted: #8a8a8a;
+            --accent: #e8590c;
+            --accent-soft: #fff4e6;
+            --green: #2b8a3e;
+            --green-soft: #ebfbee;
+            --blue: #1971c2;
+            --blue-soft: #e7f5ff;
+            --border: #eee8e0;
+            --radius: 12px;
+            --font-serif: 'Noto Serif SC', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        .container { max-width: 760px; margin: 0 auto; padding: 60px 24px; }
+        header { margin-bottom: 40px; }
+        header h1 { font-size: 1.6rem; font-weight: 700; }
+        header a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; }
+        header a:hover { color: var(--accent); }
+
+        .week-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .week-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--surface);
+            cursor: pointer;
+            font-family: var(--font-serif);
+            font-size: 0.88rem;
+            transition: all 0.2s;
+        }
+
+        .week-btn:hover, .week-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .result {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            display: none;
+        }
+
+        .result-meta {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result h2 {
+            font-size: 1.1rem;
+            margin-top: 24px;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .result p { margin-bottom: 10px; }
+        .result ul { margin-left: 20px; margin-bottom: 12px; }
+        .result li { margin-bottom: 4px; }
+
+        .error {
+            text-align: center;
+            padding: 24px;
+            color: var(--accent);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* 重新生成按钮 */
+        .result-actions {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            text-align: right;
+        }
+        .regen-btn {
+            padding: 8px 20px;
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            background: transparent;
+            color: var(--accent);
+            cursor: pointer;
+            font-family: var(--font-serif);
+            font-size: 0.82rem;
+            transition: all 0.2s;
+        }
+        .regen-btn:hover { background: var(--accent); color: white; }
+        .regen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* 历史复盘区 */
+        .history-section { margin-top: 48px; }
+        .history-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .history-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .history-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .history-card:hover { transform: translateY(-2px); }
+        .history-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-summary {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .history-detail {
+            display: none;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+        .history-detail h2 { font-size: 1rem; color: var(--accent); margin-top: 14px; margin-bottom: 6px; }
+        .history-detail ul { margin-left: 20px; margin-bottom: 8px; }
+        .history-detail li { margin-bottom: 4px; }
+        .history-detail p { margin-bottom: 8px; }
+        .history-card.expanded .history-summary { display: none; }
+        .history-card.expanded .history-detail { display: block; }
+        .score-badge-sm {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .score-badge-sm.fullness { background: var(--accent-soft); color: var(--accent); }
+        .score-badge-sm.growth { background: var(--green-soft); color: var(--green); }
+        .tag-sm {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--blue-soft);
+            color: var(--blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/">← 返回首页</a>
+            <h1 style="margin-top: 16px;">AI 周复盘</h1>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 8px;">
+                AI 会分析你本周的日报，给出成长复盘和建议
+            </p>
+        </header>
+
+        <div class="week-selector">
+            <button class="week-btn active" onclick="doReview(0, this)">本周</button>
+            <button class="week-btn" onclick="doReview(1, this)">上周</button>
+            <button class="week-btn" onclick="doReview(2, this)">两周前</button>
+        </div>
+
+        <div class="upload-section" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 32px;">
+            <h3 style="font-size: 1rem; margin-bottom: 16px;">📎 本周相关文档</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                可以上传本周学习的文档，AI 会自动解析并关联到复盘分析中
+            </p>
+            <input type="file" id="fileInput" multiple style="display: none;" onchange="handleFiles(this.files)">
+            <div id="dropZone" style="border: 2px dashed var(--border); border-radius: 8px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s;" onclick="document.getElementById('fileInput').click()">
+                <p style="font-size: 0.9rem; color: var(--text-muted);">点击或拖拽文件到这里上传</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">支持 PDF、Word、PPT、Markdown</p>
+            </div>
+            <div id="fileList" style="margin-top: 16px;"></div>
+        </div>
+
+        <div class="loading" id="loading">AI 正在分析你的日报，请稍候...</div>
+        <div class="error" id="error"></div>
+        <div class="result" id="result">
+            <div class="result-meta" id="resultMeta"></div>
+            <div id="resultContent"></div>
+            <div class="result-actions">
+                <button id="regenerateBtn" onclick="doRegenerate()" class="regen-btn">🔄 重新生成</button>
+            </div>
+        </div>
+
+        <!-- 历史复盘记录 -->
+        {% if reviews %}
+        <div class="history-section">
+            <h2 class="history-title">历史复盘</h2>
+            {% for r in reviews %}
+            <div class="history-card" onclick="toggleHistoryCard(this)">
+                <div class="history-meta">
+                    <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">{{ r.date_range }}</span>
+                    <div style="display: flex; gap: 10px;">
+                        <span class="score-badge-sm fullness">充实 {{ r.scores.fullness }}/10</span>
+                        <span class="score-badge-sm growth">成长 {{ r.scores.growth }}/10</span>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+                    {% for t in r.tags %}<span class="tag-sm">{{ t }}</span>{% endfor %}
+                </div>
+                <div class="history-summary">{{ r.content[:120] }}...</div>
+                <div class="history-detail" data-content="{{ r.content | e }}"></div>
+            </div>
+            {% endfor %}
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/dashboard" style="color: var(--accent); text-decoration: none; font-size: 0.85rem;">查看完整成长看板 →</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // 文件上传处理
+        const dropZone = document.getElementById('dropZone');
+        const fileList = document.getElementById('fileList');
+        let uploadedFiles = [];
+        let currentWeeksAgo = 0;
+
+        // 拖拽事件
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--accent)';
+            dropZone.style.background = 'var(--accent-soft)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = 'var(--border)';
+            dropZone.style.background = 'transparent';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--border)';
+            dropZone.style.background = 'transparent';
+            handleFiles(e.dataTransfer.files);
+        });
+
+        async function handleFiles(files) {
+            for (let file of files) {
+                const formData = new FormData();
+                formData.append('files', file);
+
+                // 显示上传中状态
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'padding: 8px 12px; background: var(--accent-soft); border-radius: 6px; margin-top: 8px; font-size: 0.85rem;';
+                fileItem.textContent = `📄 ${file.name} - 上传中...`;
+                fileList.appendChild(fileItem);
+
+                try {
+                    const resp = await fetch('/upload', {
+                        method: 'POST',
+                        headers: {'X-Requested-With': 'XMLHttpRequest'},
+                        body: formData
+                    });
+                    const data = await resp.json();
+
+                    if (data.success) {
+                        fileItem.textContent = `✅ ${file.name} - 已上传并解析`;
+                        fileItem.style.background = '#e8f5e9';
+                        uploadedFiles.push(file.name);
+                    } else {
+                        fileItem.textContent = `❌ ${file.name} - ${data.error || '上传失败'}`;
+                        fileItem.style.background = '#ffebee';
+                    }
+                } catch (e) {
+                    fileItem.textContent = `❌ ${file.name} - ${e.message}`;
+                    fileItem.style.background = '#ffebee';
+                }
+            }
+        }
+
+        async function doReview(weeksAgo, btn) {
+            currentWeeksAgo = weeksAgo;
+
+            // 更新按钮状态
+            document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            result.style.display = 'none';
+
+            try {
+                const resp = await fetch('/api/review', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({weeks_ago: weeksAgo}),
+                });
+                const data = await resp.json();
+
+                loading.style.display = 'none';
+
+                if (data.error) {
+                    error.textContent = data.error;
+                    error.style.display = 'block';
+                } else {
+                    document.getElementById('resultMeta').textContent =
+                        `${data.date_range} · 共 ${data.daily_count} 篇日报`;
+                    document.getElementById('resultContent').innerHTML = markdownToHtml(data.content);
+                    result.style.display = 'block';
+                }
+            } catch (e) {
+                loading.style.display = 'none';
+                error.textContent = '请求失败: ' + e.message;
+                error.style.display = 'block';
+            }
+        }
+
+        async function doRegenerate() {
+            const btn = document.getElementById('regenerateBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ 重新生成中...';
+
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            result.style.display = 'none';
+
+            try {
+                const resp = await fetch('/api/review', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({weeks_ago: currentWeeksAgo, force: true}),
+                });
+                const data = await resp.json();
+
+                loading.style.display = 'none';
+                btn.disabled = false;
+                btn.textContent = '🔄 重新生成';
+
+                if (data.error) {
+                    error.textContent = data.error;
+                    error.style.display = 'block';
+                } else {
+                    document.getElementById('resultMeta').textContent =
+                        `${data.date_range} · 共 ${data.daily_count} 篇日报`;
+                    document.getElementById('resultContent').innerHTML = markdownToHtml(data.content);
+                    result.style.display = 'block';
+                }
+            } catch (e) {
+                loading.style.display = 'none';
+                btn.disabled = false;
+                btn.textContent = '🔄 重新生成';
+                error.textContent = '请求失败: ' + e.message;
+                error.style.display = 'block';
+            }
+        }
+
+        function toggleHistoryCard(card) {
+            const detail = card.querySelector('.history-detail');
+            const isExpanding = !card.classList.contains('expanded');
+            card.classList.toggle('expanded');
+
+            // 首次展开时渲染 markdown
+            if (isExpanding && !detail.dataset.loaded) {
+                detail.innerHTML = markdownToHtml(detail.dataset.content);
+                detail.dataset.loaded = 'true';
+            }
+        }
+
+        function markdownToHtml(md) {
+            // 简易 markdown 转 HTML
+            return md
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^\- (.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/^(?!<[hul])(.+)$/gm, '<p>$1</p>')
+                .replace(/<p><\/p>/g, '');
+        }
+    </script>
+</body>
+</html>

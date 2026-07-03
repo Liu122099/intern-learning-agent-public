@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>写日报 - 实习成长记录</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --surface: #ffffff;
+            --text: #2c2c2c;
+            --text-muted: #8a8a8a;
+            --accent: #e8590c;
+            --accent-soft: #fff4e6;
+            --border: #eee8e0;
+            --radius: 12px;
+            --font-serif: 'Noto Serif SC', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        .container { max-width: 700px; margin: 0 auto; padding: 60px 24px; }
+        header { margin-bottom: 40px; }
+        header h1 { font-size: 1.6rem; font-weight: 700; }
+        header a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; }
+        header a:hover { color: var(--accent); }
+
+        form { display: flex; flex-direction: column; gap: 24px; }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            background: var(--surface);
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
+        }
+
+        textarea {
+            min-height: 300px;
+            resize: vertical;
+            line-height: 1.8;
+        }
+
+        .tags-hint {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .existing-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .existing-tags span {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .existing-tags span:hover { opacity: 0.7; }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-serif);
+            transition: opacity 0.2s;
+            align-self: flex-start;
+        }
+
+        .btn:hover { opacity: 0.85; }
+
+        .btn-ai {
+            padding: 6px 16px;
+            background: #2b8a3e;
+            color: white;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-serif);
+            transition: opacity 0.2s;
+        }
+
+        .btn-ai:hover { opacity: 0.85; }
+
+        .ai-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            align-self: center;
+        }
+
+        .tip {
+            background: var(--accent-soft);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            font-size: 0.82rem;
+            color: var(--accent);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/">← 返回首页</a>
+            <h1 style="margin-top: 16px;">写今日日报</h1>
+        </header>
+
+        <div class="tip">
+            💡 内容支持 Markdown 格式。建议记录：今天做了什么、学到了什么、遇到了什么问题、明天计划做什么。
+        </div>
+
+        <form method="POST" style="margin-top: 32px;">
+            <div>
+                <label>日期</label>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <input type="date" name="date" id="dateStart" value="{{ today }}">
+                    <span style="color: var(--text-muted); font-size: 0.85rem;" id="dateRangeLabel">至</span>
+                    <input type="date" name="date_end" id="dateEnd" value="" style="display: none;">
+                    <button type="button" id="toggleRange" onclick="toggleDateRange()" style="padding: 4px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.78rem; cursor: pointer; color: var(--text-muted); font-family: var(--font-serif);">+ 跨天</button>
+                </div>
+                <p class="tags-hint">支持跨天记录，比如一件事做了好几天可以选日期范围</p>
+            </div>
+
+            <div>
+                <label>标题</label>
+                <input type="text" name="title" placeholder="今天做了什么？一句话概括" required>
+            </div>
+
+            <div>
+                <label>标签</label>
+                <input type="text" name="tags" id="tagsInput" placeholder="如：数据分析, 用户运营, 文案撰写">
+                <p class="tags-hint">多个标签用逗号分隔，方便后续按类别复盘</p>
+                {% if tags %}
+                <div class="existing-tags">
+                    {% for t in tags %}
+                    <span onclick="addTag('{{ t }}')">{{ t }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label>内容</label>
+                <div style="display:flex; gap:12px; margin-bottom:8px;">
+                    <button type="button" class="btn-ai" onclick="aiAssist()">AI 帮写</button>
+                    <span class="ai-hint" id="aiStatus"></span>
+                </div>
+                <textarea name="content" id="contentArea" placeholder="输入今日工作要点（几个关键词或短句即可），点击「AI 帮写」自动扩写成结构化日报&#10;&#10;例如：&#10;上午写了用户增长周报，下午跟mentor开会对齐Q3目标，学了SQL窗口函数"></textarea>
+            </div>
+
+            <button type="submit" class="btn">保存日报</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleDateRange() {
+            const endInput = document.getElementById('dateEnd');
+            const btn = document.getElementById('toggleRange');
+            const label = document.getElementById('dateRangeLabel');
+
+            if (endInput.style.display === 'none') {
+                endInput.style.display = 'block';
+                endInput.value = document.getElementById('dateStart').value;
+                label.style.display = 'inline';
+                btn.textContent = '× 单天';
+                btn.style.color = 'var(--accent)';
+                btn.style.borderColor = 'var(--accent)';
+            } else {
+                endInput.style.display = 'none';
+                endInput.value = '';
+                label.style.display = 'none';
+                btn.textContent = '+ 跨天';
+                btn.style.color = 'var(--text-muted)';
+                btn.style.borderColor = 'var(--border)';
+            }
+        }
+
+        // 初始隐藏"至"标签
+        document.getElementById('dateRangeLabel').style.display = 'none';
+
+        function addTag(tag) {
+            const input = document.getElementById('tagsInput');
+            const current = input.value.trim();
+            if (current && !current.endsWith(',')) {
+                input.value = current + ', ' + tag;
+            } else {
+                input.value = current + tag;
+            }
+        }
+
+        async function aiAssist() {
+            const textarea = document.getElementById('contentArea');
+            const status = document.getElementById('aiStatus');
+            const notes = textarea.value.trim();
+
+            if (!notes) {
+                status.textContent = '请先输入今日工作要点';
+                status.style.color = 'var(--accent)';
+                return;
+            }
+
+            status.textContent = 'AI 正在帮你整理...';
+            status.style.color = 'var(--text-muted)';
+
+            try {
+                const resp = await fetch('/api/ai-assist', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({notes: notes}),
+                });
+                const data = await resp.json();
+                if (data.error) {
+                    status.textContent = data.error;
+                    status.style.color = 'var(--accent)';
+                } else {
+                    textarea.value = data.content;
+                    status.textContent = 'AI 已生成，请检查后保存';
+                    status.style.color = '#2b8a3e';
+                }
+            } catch (e) {
+                status.textContent = '请求失败: ' + e.message;
+                status.style.color = 'var(--accent)';
+            }
+        }
+    </script>
+</body>
+</html>

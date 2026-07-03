@@ -1,0 +1,27 @@
+{
+  "profile": {
+    "role": "实习生",
+    "career_goal": "填写你的职业目标",
+    "strengths": [],
+    "weaknesses": [],
+    "interests": []
+  },
+  "skill_model": {
+    "数据分析": 0,
+    "用户运营": 0,
+    "策略思维": 0,
+    "产品感觉": 0,
+    "文案撰写": 0,
+    "项目管理": 0,
+    "沟通协作": 0,
+    "工具使用": 0
+  },
+  "growth_log": [],
+  "advice_tracker": [],
+  "milestones": [],
+  "meta": {
+    "created_at": "2024-01-01",
+    "last_updated": "2024-01-01",
+    "total_interactions": 0
+  }
+}

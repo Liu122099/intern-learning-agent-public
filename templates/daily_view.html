@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ date }} - 实习成长记录</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --surface: #ffffff;
+            --text: #2c2c2c;
+            --text-muted: #8a8a8a;
+            --accent: #e8590c;
+            --accent-soft: #fff4e6;
+            --border: #eee8e0;
+            --radius: 12px;
+            --font-serif: 'Noto Serif SC', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        .container { max-width: 700px; margin: 0 auto; padding: 60px 24px; }
+        header { margin-bottom: 40px; }
+        header a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; }
+        header a:hover { color: var(--accent); }
+        header .date {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+        }
+
+        .content h1, .content h2, .content h3 {
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .content h1 { font-size: 1.4rem; }
+        .content h2 { font-size: 1.15rem; }
+        .content h3 { font-size: 1rem; }
+
+        .content p { margin-bottom: 12px; }
+
+        .content ul, .content ol {
+            margin-left: 24px;
+            margin-bottom: 12px;
+        }
+
+        .content li { margin-bottom: 4px; }
+
+        .content code {
+            font-family: var(--font-mono);
+            background: var(--accent-soft);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .content pre {
+            background: #2c2c2c;
+            color: #f0f0f0;
+            padding: 16px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .content blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: 16px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/">← 返回首页</a>
+            <div class="date">{{ date }}</div>
+        </header>
+        <div class="content">
+            {% if title and title != date %}<h1>{{ title }}</h1>{% endif %}
+            {{ html|safe }}
+        </div>
+    </div>
+</body>
+</html>
