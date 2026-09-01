@@ -566,7 +566,7 @@ def load_config():
     return config
 
 
-def call_llm(prompt, system="你是一个实习生的工作助手，帮助整理和分析工作内容。"):
+def call_llm(prompt, system="你是一个实习生的工作助手，帮助整理和分析工作内容。", timeout=120):
     """调用 LLM API（OpenAI 兼容格式）"""
     config = load_config()
     if not config:
@@ -587,7 +587,7 @@ def call_llm(prompt, system="你是一个实习生的工作助手，帮助整理
                 ],
                 "temperature": 0.7,
             },
-            timeout=60,
+            timeout=timeout,
         )
         resp.raise_for_status()
         return resp.json()['choices'][0]['message']['content']
@@ -946,7 +946,7 @@ def api_review():
 
 {projects_ctx}"""
 
-    result = call_llm(prompt, system=system)
+    result = call_llm(prompt, system=system, timeout=180)
 
     # 解析评分
     scores = {'fullness': 0, 'growth': 0}
