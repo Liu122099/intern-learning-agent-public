@@ -4,6 +4,12 @@
 
 适合实习生、职场新人，或任何想系统化记录和复盘自己成长的人。纯本地运行，数据都是你自己的文件。
 
+## 功能预览
+
+| 首页 · 日报列表 | 成长看板 | 周复盘 |
+|:---:|:---:|:---:|
+| ![首页](docs/screenshots/home.png) | ![看板](docs/screenshots/dashboard.png) | ![复盘](docs/screenshots/review.png) |
+
 ## 特性
 
 - 📝 **写日报** —— Markdown 格式，支持标签和跨天日报
